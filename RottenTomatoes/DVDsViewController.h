@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  DVDsViewController.h
 //  RottenTomatoes
 //
 //  Created by Vikas Kumar Bajaj on 9/15/14.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface DVDsViewController : UIViewController
 
 @end

@@ -7,12 +7,34 @@
 //
 
 #import "AppDelegate.h"
+#import "MoviesViewController.h"
+#import "DVDsViewController.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds] ];
+    
+    MoviesViewController *vc = [[MoviesViewController alloc] init];
+    UINavigationController *moviesViewNavController = [[UINavigationController alloc] initWithRootViewController:vc];
+    moviesViewNavController.tabBarItem.title = @"Movies";
+    moviesViewNavController.tabBarItem.image = [UIImage imageNamed:@"camera.png"];
+    
+    
+    DVDsViewController *dvdsViewController = [[DVDsViewController alloc] init];
+    UINavigationController *dvdsNavController = [[UINavigationController alloc] initWithRootViewController:dvdsViewController];
+    dvdsNavController.tabBarItem.title = @"DVDs";
+    dvdsNavController.tabBarItem.image = [UIImage imageNamed:@"DVD.png"];
+    
+    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    tabBarController.viewControllers = @[moviesViewNavController, dvdsNavController];
+    
+    
+    self.window.rootViewController = tabBarController;
+    
+    [self.window makeKeyAndVisible];
+
     return YES;
 }
 							

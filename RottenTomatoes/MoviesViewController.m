@@ -37,11 +37,12 @@
 {
     [super viewDidLoad];
     
-    [SVProgressHUD showWithStatus:@"Loading" maskType:SVProgressHUDMaskTypeNone];
+    [SVProgressHUD showWithStatus:@"Loading Movies" maskType:SVProgressHUDMaskTypeNone];
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.rowHeight = 105;
+    [self.searchDisplayController.searchResultsTableView setRowHeight:105.0f];
     [self.tableView registerNib:[UINib nibWithNibName:@"MovieCell" bundle:nil] forCellReuseIdentifier:@"MovieCell"];
     
     NSString *url = @"http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=dagqdghwaq3e3mxyrp7kmmj5&limit=20&country=us";
@@ -62,11 +63,11 @@
         
         self.movies = object[@"movies"];
         
-        [SVProgressHUD dismiss];
-        
         self.searchResult = [NSMutableArray arrayWithCapacity:[self.movies count]];
 
         [self.tableView reloadData];
+        [SVProgressHUD dismiss];
+        //[self.searchDisplayController.searchResultsTableView reloadData];
     }];
 }
 
@@ -83,8 +84,6 @@
     [self filterContentForSearchText:searchString scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
                                                          objectAtIndex:[self.searchDisplayController.searchBar
                                                                         selectedScopeButtonIndex]]];
-    
-//    /[self.searchDisplayController.searchResultsTableView reloadData];
     return YES;
 }
 
@@ -106,17 +105,16 @@
     
     static NSString *cellID = @"MovieCell";
     
-    MovieCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    MovieCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellID];
     if (!cell) {
         cell = [[MovieCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+        //cell = [[MovieCell alloc] init];
     }
 
     NSDictionary *movie;
     if (tableView == self.searchDisplayController.searchResultsTableView) {
-        NSLog(@"Returning cells for index %ld with movie title %@", (long)indexPath.row, self.searchResult[indexPath.row][@"title"]);
-        if (self.searchResult.count > indexPath.row) {
-            movie = self.searchResult[indexPath.row];
-        }
+       // NSLog(@"Returning cells for index %ld with movie title %@", (long)indexPath.row, self.searchResult[indexPath.row][@"title"]);
+        movie = self.searchResult[indexPath.row];
     } else {
         movie = self.movies[indexPath.row];
     }

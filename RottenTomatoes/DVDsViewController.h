@@ -8,6 +8,5 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DVDsViewController : UIViewController
-
+@interface DVDsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UISearchDisplayDelegate>
 @end

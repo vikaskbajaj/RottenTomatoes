@@ -11,6 +11,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "DetailedViewController.h"
 #import "SVProgressHUD.h"
+#import "TSMessage.h"
 
 @interface MoviesViewController ()
 
@@ -45,12 +46,12 @@
     [self.searchDisplayController.searchResultsTableView setRowHeight:105.0f];
     [self.tableView registerNib:[UINib nibWithNibName:@"MovieCell" bundle:nil] forCellReuseIdentifier:@"MovieCell"];
     
-    NSString *url = @"http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=dagqdghwaq3e3mxyrp7kmmj5&limit=20&country=us";
+    NSString *url = @"http://api2.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=dagqdghwaq3e3mxyrp7kmmj5&limit=20&country=us";
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
     
     self.uiRefreshControl = [[UIRefreshControl alloc] init];
     self.uiRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
-    [self.uiRefreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+    [self.uiRefreshControl addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
     [self.tableView addSubview: self.uiRefreshControl];
     
     //Search bar
@@ -59,15 +60,21 @@
     
     [NSURLConnection sendAsynchronousRequest:request queue: [NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         
-        NSDictionary *object = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        
-        self.movies = object[@"movies"];
-        
-        self.searchResult = [NSMutableArray arrayWithCapacity:[self.movies count]];
-
-        [self.tableView reloadData];
-        [SVProgressHUD dismiss];
-        //[self.searchDisplayController.searchResultsTableView reloadData];
+        if (!connectionError) {
+            NSDictionary *object = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+            self.movies = object[@"movies"];
+            self.searchResult = [NSMutableArray arrayWithCapacity:[self.movies count]];
+            [self.tableView reloadData];
+            [SVProgressHUD dismiss];
+        } else {
+            [SVProgressHUD dismiss];
+            [TSMessage showNotificationInViewController:self
+                                                  title:@"Network Error!"
+                                               subtitle:@"Please check your network and try again."
+                                                   type:TSMessageNotificationTypeError
+                                               duration:TSMessageNotificationDurationAutomatic
+                                   canBeDismissedByUser:YES];
+        }
     }];
 }
 
@@ -143,9 +150,31 @@
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
--(void)refreshTable
+-(void)refreshTable: (id) sender
 {
-    NSLog(@"In refresh table");
+    [SVProgressHUD showWithStatus:@"Loading Movies" maskType:SVProgressHUDMaskTypeNone];
+    NSString *url = @"http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=dagqdghwaq3e3mxyrp7kmmj5&limit=20&country=us";
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    
+    [NSURLConnection sendAsynchronousRequest:request queue: [NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        
+        if (!connectionError) {
+            NSDictionary *object = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+            self.movies = object[@"movies"];
+            self.searchResult = [NSMutableArray arrayWithCapacity:[self.movies count]];
+            [self.tableView reloadData];
+            [SVProgressHUD dismiss];
+        } else {
+            [SVProgressHUD dismiss];
+            [TSMessage showNotificationInViewController:self
+                                                  title:@"Network Error!"
+                                               subtitle:@"Please check your network and try again."
+                                                   type:TSMessageNotificationTypeError
+                                               duration:TSMessageNotificationDurationAutomatic
+                                   canBeDismissedByUser:YES];
+        }
+    }];
+    [(UIRefreshControl *)sender endRefreshing];
 }
 
 @end

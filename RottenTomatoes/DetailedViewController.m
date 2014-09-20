@@ -68,10 +68,10 @@
     
     [self.scrollView setBackgroundColor:[UIColor clearColor]];
     
-    [self.contentView addSubview:self.synopsisLabel];
+    //[self.contentView addSubview:self.synopsisLabel];
     [self.contentView setBackgroundColor:[UIColor clearColor]];
 
-    [self.scrollView addSubview:self.contentView];
+    //[self.scrollView addSubview:self.contentView];
     
     [self.scrollView setScrollEnabled:YES];
     

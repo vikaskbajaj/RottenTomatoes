@@ -29,9 +29,11 @@
     
     UITabBarController *tabBarController = [[UITabBarController alloc] init];
     tabBarController.viewControllers = @[moviesViewNavController, dvdsNavController];
+    tabBarController.tabBar.tintColor = [UIColor whiteColor];
     
     
     self.window.rootViewController = tabBarController;
+    self.window.backgroundColor = [UIColor clearColor];
     
     [self.window makeKeyAndVisible];
 
